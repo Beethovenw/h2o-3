@@ -17,6 +17,15 @@ def call(final scmEnv, final String mode, final boolean overrideDetectionChange)
   def getChanges = load('h2o-3/scripts/jenkins/groovy/getChanges.groovy')
   def pipelineContextFactory = load('h2o-3/scripts/jenkins/groovy/pipelineContext.groovy')
   def final pipelineContext = pipelineContextFactory.create(this, 'h2o-3/scripts/jenkins/groovy', mode, commitMessage, getChanges('h2o-3'), overrideDetectionChange)
+  pipelineContext.getBuildSummary().addSection(this, 'Details', """
+    <ul>
+      <li><strong>Commit Message:</strong> ${commitMessage}</li>
+      <li><strong>Git Branch:</strong> ${env.BRANCH_NAME}</li>
+      <li><strong>Git SHA:</strong> ${env.GIT_SHA}</li>
+    </ul>
+  """)
+
+  pipelineContext.getBuildSummary().addChangesSectionIfNecessary(this)
 
   // Archive scripts so we don't have to do additional checkouts when changing node
   stash name: pipelineContext.getBuildConfig().PIPELINE_SCRIPTS_STASH_NAME, includes: 'h2o-3/scripts/jenkins/groovy/*', allowEmpty: false

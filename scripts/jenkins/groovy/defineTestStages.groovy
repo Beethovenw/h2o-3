@@ -169,11 +169,13 @@ def call(final pipelineContext) {
     ]
   ]
 
+  // enable tests overview section in build summary
+  pipelineContext.getBuildSummary().addTestsSection(this)
+
   // run smoke tests, the tests relevant for this mode
   executeInParallel(SMOKE_STAGES, pipelineContext)
 
   def modeCode = MODES.find{it['name'] == pipelineContext.getBuildConfig().getMode()}['code']
-  // FIXME: Remove the if and KEEP only the else once the initial PR tests in real environment are completed
   def jobs = PR_STAGES
   if (modeCode >= MODE_MASTER_CODE) {
     jobs += MASTER_STAGES
@@ -247,6 +249,7 @@ def invokeStage(final pipelineContext, final body) {
 
         def script = load(config.executionScript)
         script(pipelineContext, config)
+        pipelineContext.getBuildSummary().updateTestsSection(this)
       }
       pipelineContext.getBuildSummary().markStageSuccessful(this, config.stageName)
     } catch (Exception e) {

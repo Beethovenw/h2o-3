@@ -26,7 +26,7 @@ class PipelineContext{
             def final buildConfigFactory = context.load("${scriptsDirPath}/${BUILD_CONFIG_SCRIPT_NAME}")
             return new PipelineContext(
                     buildConfigFactory(context, mode, commitMessage, changes, overrideDetectionChange),
-                    buildSummaryFactory(commitMessage)
+                    buildSummaryFactory()
             )
         }
     }
