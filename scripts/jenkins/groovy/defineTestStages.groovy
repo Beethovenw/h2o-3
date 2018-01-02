@@ -115,16 +115,6 @@ def call(final pipelineContext) {
     ]
   ]
 
-  // Stages for PRs in testing phase, executed after each push to PR.
-  def PR_TESTING_STAGES = PR_STAGES.findAll{k ->
-    // get all stages shorter than 45 minutes and exclude JS stages
-    (k['timeoutValue'] <= 45 && k['lang'] != pipelineContext.getBuildConfig().LANG_JS) ||
-      // include R Small and Medium-large regardless of previous conditions
-      (k['stageName'] == 'R3.4 Medium-large' || k['stageName'] == 'R3.4 Small') ||
-        // include JUnit
-        (k['lang'] == pipelineContext.getBuildConfig().LANG_JAVA)
-  }
-
   // Stages executed in addition to PR_STAGES after merge to master.
   def MASTER_STAGES = [
     [
